@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Back Recovery Journey 🌿</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream:#fdf8f2; --rose:#e8a598; --rose-deep:#c97b6e;
+  --sage:#8fab8a; --sage-deep:#5e8a5c;
+  --amber:#e8c47a; --amber-deep:#c9a044;
+  --text:#3a2e28; --text-soft:#7a6a62;
+  --card:rgba(255,252,248,0.95);
+  --shadow:0 4px 24px rgba(150,100,80,0.10);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:'Nunito',sans-serif; background:var(--cream); color:var(--text); min-height:100vh;
+  background-image:
+    radial-gradient(ellipse at 10% 15%,rgba(232,165,152,0.2) 0%,transparent 50%),
+    radial-gradient(ellipse at 90% 80%,rgba(143,171,138,0.2) 0%,transparent 50%),
+    radial-gradient(ellipse at 55% 45%,rgba(232,196,122,0.10) 0%,transparent 60%);
+}
+header{text-align:center;padding:2.2rem 1rem 1rem;}
+.leaf-anim{font-size:2rem;display:block;margin-bottom:.4rem;animation:sway 4s ease-in-out infinite;}
+@keyframes sway{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}}
+header h1{font-family:'Playfair Display',serif;font-size:clamp(1.5rem,5vw,2.2rem);font-style:italic;}
+header p{color:var(--text-soft);font-size:.9rem;margin-top:.3rem;}
+
+.tabs{display:flex;justify-content:center;gap:.4rem;padding:1rem 1rem 0;flex-wrap:wrap;}
+.tab-btn{
+background:white;border:2px solid transparent;border-radius:50px;
+padding:.45rem 1.1rem;font-family:‘Nunito’,sans-serif;font-size:.82rem;
+font-weight:700;color:var(–text-soft);cursor:pointer;
+transition:all .22s;box-shadow:0 2px 8px rgba(150,100,80,.08);
+}
+.tab-btn:hover{transform:translateY(-1px);}
+.tab-btn.active{background:var(–rose);color:white;border-color:var(–rose-deep);}
+
+.section{display:none;padding:1.4rem 1rem 5rem;max-width:680px;margin:0 auto;}
+.section.active{display:block;animation:fadeUp .35s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+.card{background:var(–card);border-radius:20px;padding:1.4rem 1.5rem;box-shadow:var(–shadow);margin-bottom:1.2rem;border:1px solid rgba(255,255,255,.85);}
+.card-title{font-family:‘Playfair Display’,serif;font-size:1.05rem;color:var(–text);margin-bottom:1rem;}
+.section-label{font-family:‘Playfair Display’,serif;font-size:1.2rem;font-style:italic;color:var(–text);margin-bottom:1rem;}
+
+.pain-scale{display:flex;gap:.32rem;flex-wrap:wrap;justify-content:center;}
+.pain-btn{
+width:40px;height:40px;border-radius:50%;border:2px solid #e0d5cc;
+background:white;font-weight:700;font-size:.88rem;cursor:pointer;
+transition:all .18s;font-family:‘Nunito’,sans-serif;
+}
+.pain-btn:hover{transform:scale(1.12);}
+.pain-btn.selected{color:white;border-color:transparent;transform:scale(1.18);}
+.p0{–c:#7bc47b}.p1{–c:#93c97a}.p2{–c:#b8d46e}.p3{–c:#d4cc5f}.p4{–c:#e8be5a}
+.p5{–c:#e8a050}.p6{–c:#e08040}.p7{–c:#d96030}.p8{–c:#cc4444}.p9{–c:#c03030}.p10{–c:#b01818}
+.pain-btn.selected{background:var(–c);}
+.pain-label{text-align:center;margin-top:.6rem;font-size:.82rem;color:var(–text-soft);min-height:1.1rem;}
+
+textarea{
+width:100%;border:1.5px solid #e0d5cc;border-radius:12px;
+padding:.7rem 1rem;font-family:‘Nunito’,sans-serif;font-size:.93rem;
+color:var(–text);background:white;resize:vertical;min-height:70px;
+outline:none;transition:border-color .2s;
+}
+textarea:focus{border-color:var(–rose);}
+textarea::placeholder{color:#bbb;}
+input[type=range]{width:100%;cursor:pointer;accent-color:var(–sage-deep);margin-top:.3rem;}
+
+.btn-primary{
+display:block;width:100%;padding:.85rem;
+background:linear-gradient(135deg,var(–rose),var(–rose-deep));
+color:white;border:none;border-radius:50px;
+font-family:‘Nunito’,sans-serif;font-size:1rem;font-weight:700;
+cursor:pointer;margin-top:.9rem;transition:all .22s;
+box-shadow:0 4px 14px rgba(201,123,110,.35);
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(201,123,110,.42);}
+.btn-primary:active{transform:translateY(0);}
+
+.toast{
+position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(100px);
+background:linear-gradient(135deg,var(–sage),var(–sage-deep));
+color:white;padding:.8rem 1.4rem;border-radius:50px;
+font-weight:700;font-size:.92rem;box-shadow:0 8px 24px rgba(94,138,92,.4);
+transition:transform .4s cubic-bezier(.34,1.56,.64,1);
+z-index:999;white-space:nowrap;max-width:90vw;text-align:center;
+}
+.toast.show{transform:translateX(-50%) translateY(0);}
+
+.confetti-piece{
+position:fixed;pointer-events:none;z-index:1000;border-radius:2px;
+animation:confettiFall 1.5s ease-in forwards;
+}
+@keyframes confettiFall{
+0%{opacity:1;transform:translateY(0) rotate(0deg) scale(1);}
+100%{opacity:0;transform:translateY(320px) rotate(720deg) scale(.3);}
+}
+
+.encourage-box{
+background:linear-gradient(135deg,rgba(143,171,138,.15),rgba(232,196,122,.12));
+border:1.5px solid rgba(143,171,138,.35);border-radius:16px;
+padding:1rem 1.2rem;font-size:.9rem;line-height:1.65;color:var(–text);
+margin-top:.9rem;display:none;animation:fadeUp .4s ease;
+}
+.encourage-box.show{display:block;}
+.enc-emoji{font-size:1.3rem;display:block;margin-bottom:.25rem;}
+
+.streak-row{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;}
+.streak-day{width:25px;height:25px;border-radius:6px;background:#ede5dd;transition:background .3s;flex-shrink:0;}
+.streak-day.logged{background:var(–sage);}
+.streak-day.today{outline:2.5px solid var(–rose);outline-offset:2px;}
+.streak-count{font-family:‘Playfair Display’,serif;font-size:1.4rem;color:var(–sage-deep);font-weight:600;}
+.streak-label{font-size:.78rem;color:var(–text-soft);}
+
+.badges-grid{display:flex;gap:.65rem;flex-wrap:wrap;}
+.badge{display:flex;flex-direction:column;align-items:center;gap:.2rem;width:68px;opacity:.25;filter:grayscale(1);transition:all .4s;}
+.badge.earned{opacity:1;filter:none;animation:badgePop .5s cubic-bezier(.34,1.56,.64,1);}
+@keyframes badgePop{0%{transform:scale(.4)}100%{transform:scale(1)}}
+.badge-icon{font-size:1.9rem;}
+.badge-name{font-size:.62rem;font-weight:700;color:var(–text-soft);text-align:center;line-height:1.2;}
+.badge.earned .badge-name{color:var(–sage-deep);}
+
+.log-entry{background:white;border-radius:14px;padding:.9rem 1.1rem;margin-bottom:.7rem;border-left:4px solid var(–rose);box-shadow:0 2px 8px rgba(150,100,80,.07);animation:fadeUp .3s ease;}
+.log-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:.2rem;}
+.log-date{font-size:.77rem;color:var(–text-soft);}
+.pain-chip{font-size:.74rem;font-weight:700;padding:.18rem .65rem;border-radius:50px;color:white;}
+.log-note{font-size:.88rem;color:var(–text-soft);margin-top:.2rem;}
+.no-logs{text-align:center;color:var(–text-soft);padding:2rem;font-style:italic;}
+
+.exercise-card{background:var(–card);border-radius:20px;padding:1.3rem 1.4rem;margin-bottom:1.1rem;box-shadow:var(–shadow);border:1px solid rgba(255,255,255,.85);transition:transform .2s,box-shadow .2s;}
+.ex-header{display:flex;align-items:center;gap:.9rem;cursor:pointer;}
+.ex-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;}
+.ex-icon.g{background:rgba(143,171,138,.18);} .ex-icon.a{background:rgba(232,196,122,.20);} .ex-icon.r{background:rgba(232,165,152,.18);}
+.ex-title{font-family:‘Playfair Display’,serif;font-size:1rem;}
+.ex-tag{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(–sage-deep);margin-top:.1rem;}
+.ex-chevron{margin-left:auto;color:var(–text-soft);transition:transform .25s;font-size:1rem;}
+.exercise-card.open .ex-chevron{transform:rotate(180deg);}
+.ex-body{display:none;margin-top:1rem;padding-top:1rem;border-top:1px dashed #e0d5cc;font-size:.9rem;color:var(–text-soft);line-height:1.7;animation:fadeUp .25s ease;}
+.exercise-card.open .ex-body{display:block;}
+.ex-steps{list-style:none;padding:0;margin-top:.5rem;}
+.ex-steps li{display:flex;gap:.6rem;align-items:flex-start;margin-bottom:.5rem;}
+.step-num{background:var(–sage);color:white;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0;margin-top:.15rem;}
+
+.gate-pill{display:inline-flex;align-items:center;gap:.3rem;font-size:.72rem;font-weight:700;padding:.2rem .65rem;border-radius:50px;margin-top:.35rem;}
+.gate-pill.open-gate{background:rgba(143,171,138,.2);color:var(–sage-deep);}
+.gate-pill.closed-gate{background:rgba(232,165,152,.2);color:var(–rose-deep);}
+
+.locked-overlay{display:none;background:rgba(253,248,242,.9);border-radius:12px;padding:.75rem 1rem;margin-top:.8rem;text-align:center;border:1.5px dashed var(–rose);font-size:.88rem;color:var(–rose-deep);font-weight:600;}
+
+.avoid-list{background:rgba(232,165,152,.10);border-radius:14px;padding:1rem 1.2rem;list-style:none;margin-bottom:1.4rem;}
+.avoid-list li{display:flex;gap:.55rem;align-items:center;padding:.35rem 0;font-size:.9rem;border-bottom:1px solid rgba(232,165,152,.2);}
+.avoid-list li:last-child{border:none;}
+.x-icon{color:var(–rose-deep);font-weight:900;font-size:1rem;}
+
+.physio-box{background:rgba(143,171,138,.12);border:1.5px solid rgba(143,171,138,.4);border-radius:16px;padding:1rem 1.2rem;font-size:.88rem;line-height:1.7;color:var(–text);margin-bottom:1.2rem;}
+.physio-box h4{color:var(–sage-deep);font-size:.95rem;margin-bottom:.4rem;}
+
+.star-row{display:flex;gap:.4rem;justify-content:center;margin:.5rem 0;}
+.star-btn{font-size:1.9rem;background:none;border:none;cursor:pointer;transition:transform .15s;filter:grayscale(1) opacity(.35);}
+.star-btn:hover,.star-btn.lit{filter:none;transform:scale(1.2);}
+.mood-row{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-bottom:.8rem;}
+.mood-btn{background:white;border:2px solid #e0d5cc;border-radius:50px;padding:.35rem .9rem;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .18s;color:var(–text-soft);}
+.mood-btn.selected{border-color:var(–amber-deep);background:rgba(232,196,122,.18);color:var(–text);}
+
+.threshold-row{display:flex;flex-direction:column;gap:.2rem;margin-bottom:1rem;}
+.threshold-label{display:flex;justify-content:space-between;align-items:center;font-size:.88rem;}
+.threshold-label span:last-child{font-weight:700;color:var(–sage-deep);font-size:1rem;}
+
+.chart-wrap{overflow-x:auto;padding-bottom:.4rem;}
+canvas#trendChart{display:block;max-width:100%;}
+
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-top:.4rem;}
+.stat-box{background:rgba(143,171,138,.1);border-radius:14px;padding:.8rem;text-align:center;}
+.stat-val{font-weight:700;font-size:1.1rem;color:var(–text);margin:.2rem 0;}
+.stat-lbl{font-size:.74rem;color:var(–text-soft);}
+
+@media(max-width:380px){.pain-btn{width:34px;height:34px;font-size:.78rem;}.badge{width:58px;}}
+</style>
+
+</head>
+<body>
+
+<header>
+  <span class="leaf-anim">🌿</span>
+  <h1>Your Back Recovery Journey</h1>
+  <p>Track, heal, and celebrate every step 💛</p>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active"  onclick="showTab('tracker',event)">📋 Log</button>
+  <button class="tab-btn"         onclick="showTab('exercises',event)">🧘 Exercises</button>
+  <button class="tab-btn"         onclick="showTab('feedback',event)">💬 Feedback</button>
+  <button class="tab-btn"         onclick="showTab('progress',event)">📈 Progress</button>
+  <button class="tab-btn"         onclick="showTab('settings',event)">⚙️ Settings</button>
+</div>
+
+<!-- ══ LOG ══ -->
+
+<div id="tracker" class="section active">
+  <div class="card">
+    <div class="card-title">How is your back right now?</div>
+    <div class="pain-scale" id="painScale"></div>
+    <div class="pain-label" id="painLabel">Tap a number to log your pain</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Any notes? <span style="font-weight:400;color:var(--text-soft);font-size:.87rem">(optional)</span></div>
+    <textarea id="noteInput" placeholder="e.g. Tried dead bug today — felt great! Morning stiffness improving…"></textarea>
+    <button class="btn-primary" onclick="saveLog()">Save Today's Entry ✓</button>
+    <div class="encourage-box" id="encourageBox">
+      <span class="enc-emoji" id="encEmoji"></span>
+      <span id="encMsg"></span>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">🔥 Your streak</div>
+    <div class="streak-row">
+      <div style="flex-shrink:0;">
+        <div class="streak-count" id="streakCount">0</div>
+        <div class="streak-label">days in a row</div>
+      </div>
+      <div id="streakBar" style="display:flex;flex-wrap:wrap;gap:.28rem;flex:1;"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">🏅 Badges earned</div>
+    <div class="badges-grid" id="badgesGrid"></div>
+  </div>
+  <div class="section-label">Recent entries</div>
+  <div id="logList"><p class="no-logs">No entries yet — start logging today 🌱</p></div>
+</div>
+
+<!-- ══ EXERCISES ══ -->
+
+<div id="exercises" class="section">
+  <div class="card" style="background:rgba(232,165,152,.12);border:1.5px solid rgba(232,165,152,.35);padding:1rem 1.2rem;">
+    <p style="font-size:.87rem;color:var(--rose-deep);">⚠️ Stop immediately if any exercise causes sharp or shooting pain. These are safe alternatives while awaiting your physio.</p>
+  </div>
+  <div class="section-label">✅ Safe exercises for you</div>
+  <p style="font-size:.84rem;color:var(--text-soft);margin-bottom:1.1rem;">Exercises unlock based on your pain level today. You can adjust pain thresholds in ⚙️ Settings.</p>
+
+  <div class="exercise-card" id="ex-deadbug">
+    <div class="ex-header" onclick="toggleEx(this.parentElement)">
+      <div class="ex-icon g">🐛</div>
+      <div>
+        <div class="ex-title">Dead Bug</div>
+        <div class="ex-tag">★ Most recommended · Core strength</div>
+        <div id="gate-deadbug" class="gate-pill"></div>
+      </div>
+      <span class="ex-chevron">▼</span>
+    </div>
+    <div class="locked-overlay" id="lock-deadbug">🔒 Rest today — pain level too high. Try when it drops.</div>
+    <div class="ex-body">
+      <p>Works your core brilliantly <strong>without any arching or compression</strong> of your lower back.</p>
+      <ul class="ex-steps">
+        <li><span class="step-num">1</span>Lie flat on your back on a mat.</li>
+        <li><span class="step-num">2</span><strong>Press your entire lower back flat</strong> into the floor — no gap at all.</li>
+        <li><span class="step-num">3</span>Raise both arms up toward the ceiling and bring knees to 90°.</li>
+        <li><span class="step-num">4</span>Slowly lower your right arm behind you while extending the left leg — back stays FLAT.</li>
+        <li><span class="step-num">5</span>Return and switch sides. That's 1 rep.</li>
+        <li><span class="step-num">6</span>If your back lifts off the floor at any point, stop the set.</li>
+      </ul>
+      <p style="margin-top:.7rem;">🎯 <strong>3 sets of 5–8 reps per side</strong> to start.</p>
+    </div>
+  </div>
+
+  <div class="exercise-card" id="ex-birddog">
+    <div class="ex-header" onclick="toggleEx(this.parentElement)">
+      <div class="ex-icon a">🐦</div>
+      <div>
+        <div class="ex-title">Bird-Dog</div>
+        <div class="ex-tag">Core stability · Balance</div>
+        <div id="gate-birddog" class="gate-pill"></div>
+      </div>
+      <span class="ex-chevron">▼</span>
+    </div>
+    <div class="locked-overlay" id="lock-birddog">🔒 Rest today — pain level too high. Try when it drops.</div>
+    <div class="ex-body">
+      <p>An all-fours movement for core stability. <strong>Do not let your stomach sag</strong> toward the floor.</p>
+      <ul class="ex-steps">
+        <li><span class="step-num">1</span>Start on hands and knees — wrists under shoulders, knees under hips.</li>
+        <li><span class="step-num">2</span>Gently brace your core.</li>
+        <li><span class="step-num">3</span>Extend right arm forward and left leg back — both parallel to the floor.</li>
+        <li><span class="step-num">4</span>Hold 2–3 sec. <strong>No hip rotation, no back arch.</strong></li>
+        <li><span class="step-num">5</span>Return slowly and switch sides.</li>
+      </ul>
+      <p style="margin-top:.7rem;">🎯 <strong>3 sets of 6 reps per side.</strong></p>
+    </div>
+  </div>
+
+  <div class="exercise-card" id="ex-pallof">
+    <div class="ex-header" onclick="toggleEx(this.parentElement)">
+      <div class="ex-icon r">💪</div>
+      <div>
+        <div class="ex-title">Pallof Press</div>
+        <div class="ex-tag">Anti-rotation · Standing</div>
+        <div id="gate-pallof" class="gate-pill"></div>
+      </div>
+      <span class="ex-chevron">▼</span>
+    </div>
+    <div class="locked-overlay" id="lock-pallof">🔒 Rest today — pain level too high. Try when it drops.</div>
+    <div class="ex-body">
+      <p>Standing with a resistance band — trains your core to <strong>resist rotation</strong> without any lower back pressure.</p>
+      <ul class="ex-steps">
+        <li><span class="step-num">1</span>Anchor a resistance band at chest height (door handle or pole).</li>
+        <li><span class="step-num">2</span>Stand side-on, feet shoulder-width apart.</li>
+        <li><span class="step-num">3</span>Hold the band at your chest with both hands.</li>
+        <li><span class="step-num">4</span>Press both arms straight out. Hold 2 sec — resist the rotation.</li>
+        <li><span class="step-num">5</span>Slowly return. That's 1 rep.</li>
+      </ul>
+      <p style="margin-top:.7rem;">🎯 <strong>3 sets of 8–10 reps each side.</strong> Light band to start.</p>
+    </div>
+  </div>
+
+  <div class="section-label" style="margin-top:1.4rem;">🚫 Avoid for now</div>
+  <ul class="avoid-list">
+    <li><span class="x-icon">✕</span>Standard planks</li>
+    <li><span class="x-icon">✕</span>Leg raises (especially with pillow under back)</li>
+    <li><span class="x-icon">✕</span>Leaning or arching backward</li>
+    <li><span class="x-icon">✕</span>Deadlift lockout position</li>
+    <li><span class="x-icon">✕</span>Any movement causing more than mild discomfort</li>
+  </ul>
+
+  <div class="physio-box">
+    <h4>💬 What to tell your physio</h4>
+    "My pain is consistent with <strong>Extension Intolerance</strong>. I get sharp pain leaning backward (8/10) and 7/10 during planks. Under load my pelvis tilts forward and I hinge into my lower back. My historic coccyx fracture likely affects my pelvic positioning."
+  </div>
+</div>
+
+<!-- ══ FEEDBACK ══ -->
+
+<div id="feedback" class="section">
+  <div class="card">
+    <div class="card-title">How helpful is this app? ⭐</div>
+    <div class="star-row" id="starRow">
+      <button class="star-btn" onclick="rateStar(1)">⭐</button>
+      <button class="star-btn" onclick="rateStar(2)">⭐</button>
+      <button class="star-btn" onclick="rateStar(3)">⭐</button>
+      <button class="star-btn" onclick="rateStar(4)">⭐</button>
+      <button class="star-btn" onclick="rateStar(5)">⭐</button>
+    </div>
+    <p id="starMsg" style="text-align:center;font-size:.85rem;color:var(--text-soft);min-height:1.2rem;"></p>
+  </div>
+  <div class="card">
+    <div class="card-title">How are you feeling overall today?</div>
+    <div class="mood-row" id="moodRow">
+      <button class="mood-btn" onclick="selectMood(this)">😞 Struggling</button>
+      <button class="mood-btn" onclick="selectMood(this)">😐 Okay</button>
+      <button class="mood-btn" onclick="selectMood(this)">🙂 Good</button>
+      <button class="mood-btn" onclick="selectMood(this)">😄 Great!</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Any suggestions or comments?</div>
+    <textarea id="feedbackText" placeholder="What's working? What could be better? Anything you'd like added?"></textarea>
+    <button class="btn-primary" onclick="saveFeedback()">Submit Feedback 💛</button>
+  </div>
+  <div class="section-label">Previous feedback</div>
+  <div id="feedbackList"><p class="no-logs">No feedback yet 🌱</p></div>
+</div>
+
+<!-- ══ PROGRESS ══ -->
+
+<div id="progress" class="section">
+  <div class="card">
+    <div class="card-title">📈 Pain trend — last 14 days</div>
+    <div class="chart-wrap">
+      <canvas id="trendChart" height="190"></canvas>
+    </div>
+    <p style="font-size:.78rem;color:var(--text-soft);margin-top:.6rem;text-align:center;">Lower is better 💚 — each dot is a logged day</p>
+  </div>
+  <div class="card">
+    <div class="card-title">📊 Your stats</div>
+    <div class="stats-grid" id="statsGrid"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">🏅 All badges</div>
+    <div class="badges-grid" id="badgesGridFull"></div>
+  </div>
+</div>
+
+<!-- ══ SETTINGS ══ -->
+
+<div id="settings" class="section">
+  <div class="card">
+    <div class="card-title">⚙️ Exercise pain thresholds</div>
+    <p style="font-size:.85rem;color:var(--text-soft);margin-bottom:1.1rem;">Each exercise is only recommended when your logged pain is <strong>at or below</strong> its threshold. Drag to personalise.</p>
+    <div class="threshold-row">
+      <div class="threshold-label"><span>🐛 Dead Bug — max pain</span><span id="val-deadbug">4</span></div>
+      <input type="range" min="0" max="10" value="4" id="slider-deadbug" oninput="updateThreshold('deadbug',this.value)">
+    </div>
+    <div class="threshold-row">
+      <div class="threshold-label"><span>🐦 Bird-Dog — max pain</span><span id="val-birddog">5</span></div>
+      <input type="range" min="0" max="10" value="5" id="slider-birddog" oninput="updateThreshold('birddog',this.value)">
+    </div>
+    <div class="threshold-row">
+      <div class="threshold-label"><span>💪 Pallof Press — max pain</span><span id="val-pallof">6</span></div>
+      <input type="range" min="0" max="10" value="6" id="slider-pallof" oninput="updateThreshold('pallof',this.value)">
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">🗑️ Data</div>
+    <p style="font-size:.85rem;color:var(--text-soft);margin-bottom:.9rem;">All data is stored only on this device (browser local storage).</p>
+    <button class="btn-primary" style="background:linear-gradient(135deg,#c0a0a0,#a07070);" onclick="clearData()">Clear all data</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const PAIN_LABELS=["No pain at all 😊","Barely noticeable","Very mild ache","Mild, manageable","Moderate — distracting","Moderate — significant","Fairly severe","Severe — hard to ignore","Very severe 😟","Extremely severe","Worst imaginable 😰"];
+const ENCOURAGE=[["🌟","Every entry is a step forward — you're doing brilliantly!"],["💚","Consistency is the secret ingredient. Keep going!"],["🌸","Your body appreciates you paying attention to it."],["🌈","Small steps every day add up to big changes. Proud of you!"],["✨","Logging today means better data for your physio tomorrow."],["🌿","You showed up for yourself today. That matters."],["🦋","Recovery isn't linear — but you're trending forward."],["💛","One day at a time. You've got this!"]];
+const BADGES=[
+  {id:'first',  icon:'🌱',name:'First Step',   check:l=>l.length>=1},
+  {id:'three',  icon:'🔥',name:'3-Day Streak', check:l=>getStreak(l)>=3},
+  {id:'week',   icon:'🏆',name:'One Week',     check:l=>getStreak(l)>=7},
+  {id:'fortnight',icon:'🌟',name:'Two Weeks',  check:l=>getStreak(l)>=14},
+  {id:'ten',    icon:'📝',name:'10 Entries',   check:l=>l.length>=10},
+  {id:'improve',icon:'📉',name:'Improving!',   check:l=>isPainImproving(l)},
+  {id:'lowpain',icon:'💚',name:'Great Day!',   check:l=>l.some(e=>e.pain<=2)},
+  {id:'fbhero', icon:'💬',name:'Feedback Hero',check:_=>getFeedbacks().length>=1},
+];
+
+function getLogs(){try{return JSON.parse(localStorage.getItem('backLogs')||'[]')}catch{return[]}}
+function getFeedbacks(){try{return JSON.parse(localStorage.getItem('backFeedbacks')||'[]')}catch{return[]}}
+function getThresholds(){try{return JSON.parse(localStorage.getItem('backThresholds')||'{"deadbug":4,"birddog":5,"pallof":6}')}catch{return{deadbug:4,birddog:5,pallof:6}}}
+function getLastPain(){const l=getLogs();return l.length?l[0].pain:null;}
+
+function getStreak(logs){
+  if(!logs.length)return 0;
+  const days=new Set(logs.map(l=>{const d=new Date(l.ts);d.setHours(0,0,0,0);return d.getTime();}));
+  let s=0,d=new Date();d.setHours(0,0,0,0);
+  while(days.has(d.getTime())){s++;d.setDate(d.getDate()-1);}
+  return s;
+}
+function isPainImproving(logs){
+  const r=logs.slice(0,5);
+  return r.length>=5&&r[0].pain<r[4].pain;
+}
+
+// Pain scale
+let selectedPain=null;
+const scaleEl=document.getElementById('painScale');
+for(let i=0;i<=10;i++){
+  const b=document.createElement('button');
+  b.className=`pain-btn p${i}`;
+  b.textContent=i;
+  b.onclick=()=>selectPain(i,b);
+  scaleEl.appendChild(b);
+}
+function selectPain(v,btn){
+  selectedPain=v;
+  document.querySelectorAll('.pain-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  document.getElementById('painLabel').textContent=PAIN_LABELS[v];
+}
+
+function saveLog(){
+  if(selectedPain===null){showToast('Please select a pain level first 💛');return;}
+  const note=document.getElementById('noteInput').value.trim();
+  const now=new Date();
+  const entry={pain:selectedPain,note,date:now.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}),time:now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}),ts:now.toISOString()};
+  const logs=getLogs();logs.unshift(entry);
+  localStorage.setItem('backLogs',JSON.stringify(logs));
+  document.getElementById('noteInput').value='';
+  const sp=selectedPain;selectedPain=null;
+  document.querySelectorAll('.pain-btn').forEach(b=>b.classList.remove('selected'));
+  document.getElementById('painLabel').textContent='Tap a number to log your pain';
+  showEncouragement(logs.length);
+  fireConfetti();
+  checkNewBadges(logs);
+  renderAll();
+}
+
+function showEncouragement(count){
+  const[emoji,msg]=ENCOURAGE[count%ENCOURAGE.length];
+  document.getElementById('encEmoji').textContent=emoji;
+  document.getElementById('encMsg').textContent=msg;
+  const box=document.getElementById('encourageBox');
+  box.classList.add('show');
+  setTimeout(()=>box.classList.remove('show'),5000);
+}
+
+function renderAll(){
+  renderLogs();renderStreak();renderBadges();
+  renderExerciseGates();renderChart();renderStats();renderFeedbackList();
+}
+
+function renderLogs(){
+  const logs=getLogs();
+  const el=document.getElementById('logList');
+  if(!logs.length){el.innerHTML='<p class="no-logs">No entries yet — start logging today 🌱</p>';return;}
+  const pc=['#7bc47b','#93c97a','#b8d46e','#d4cc5f','#e8be5a','#e8a050','#e08040','#d96030','#cc4444','#c03030','#b01818'];
+  el.innerHTML=logs.slice(0,10).map(l=>`<div class="log-entry"><div class="log-top"><span class="log-date">${l.date} · ${l.time}</span><span class="pain-chip" style="background:${pc[l.pain]}">Pain: ${l.pain}/10</span></div>${l.note?`<div class="log-note">${l.note}</div>`:''}</div>`).join('');
+}
+
+function renderStreak(){
+  const logs=getLogs();
+  document.getElementById('streakCount').textContent=getStreak(logs);
+  const bar=document.getElementById('streakBar');
+  const today=new Date();today.setHours(0,0,0,0);
+  const ld=new Set(logs.map(l=>{const d=new Date(l.ts);d.setHours(0,0,0,0);return d.getTime();}));
+  bar.innerHTML='';
+  for(let i=13;i>=0;i--){
+    const d=new Date(today);d.setDate(d.getDate()-i);
+    const div=document.createElement('div');
+    div.className='streak-day';
+    if(ld.has(d.getTime()))div.classList.add('logged');
+    if(i===0)div.classList.add('today');
+    bar.appendChild(div);
+  }
+}
+
+function getEarnedBadges(logs){return BADGES.filter(b=>b.check(logs)).map(b=>b.id);}
+
+function renderBadges(){
+  const logs=getLogs();
+  const earned=new Set(getEarnedBadges(logs));
+  ['badgesGrid','badgesGridFull'].forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;
+    el.innerHTML=BADGES.map(b=>`<div class="badge${earned.has(b.id)?' earned':''}" title="${b.name}"><span class="badge-icon">${b.icon}</span><span class="badge-name">${b.name}</span></div>`).join('');
+  });
+}
+
+function checkNewBadges(logs){
+  const prev=JSON.parse(localStorage.getItem('earnedBadges')||'[]');
+  const now=getEarnedBadges(logs);
+  const newOnes=now.filter(id=>!prev.includes(id));
+  localStorage.setItem('earnedBadges',JSON.stringify(now));
+  if(newOnes.length){const b=BADGES.find(x=>x.id===newOnes[0]);setTimeout(()=>showToast(`🏅 Badge unlocked: ${b.icon} ${b.name}!`),600);}
+}
+
+function renderExerciseGates(){
+  const pain=getLastPain();
+  const t=getThresholds();
+  [{id:'deadbug',thr:t.deadbug},{id:'birddog',thr:t.birddog},{id:'pallof',thr:t.pallof}].forEach(({id,thr})=>{
+    const pill=document.getElementById(`gate-${id}`);
+    const lock=document.getElementById(`lock-${id}`);
+    const card=document.getElementById(`ex-${id}`);
+    if(pain===null){
+      pill.className='gate-pill open-gate';pill.textContent='📋 Log today\'s pain to check';
+      lock.style.display='none';return;
+    }
+    const ok=pain<=thr;
+    pill.className=`gate-pill ${ok?'open-gate':'closed-gate'}`;
+    pill.textContent=ok?`✅ OK — pain ${pain} ≤ ${thr}`:`🔒 Rest — pain ${pain} > ${thr}`;
+    lock.style.display=ok?'none':'block';
+    if(!ok&&card.classList.contains('open'))card.classList.remove('open');
+  });
+}
+
+function renderChart(){
+  const canvas=document.getElementById('trendChart');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const W=canvas.parentElement.clientWidth||560;const H=190;
+  canvas.width=W;canvas.height=H;
+  const logs=getLogs();
+  const today=new Date();today.setHours(0,0,0,0);
+  const byDay={};
+  logs.forEach(l=>{const d=new Date(l.ts);d.setHours(0,0,0,0);const k=d.getTime();if(byDay[k]===undefined||l.pain>byDay[k])byDay[k]=l.pain;});
+  const days=[],values=[];
+  for(let i=13;i>=0;i--){const d=new Date(today);d.setDate(d.getDate()-i);days.push(d.toLocaleDateString('en-GB',{day:'numeric',month:'short'}));values.push(byDay[d.getTime()]??null);}
+  const pad={t:16,r:14,b:42,l:28};
+  const cw=W-pad.l-pad.r,ch=H-pad.t-pad.b;
+  ctx.clearRect(0,0,W,H);
+  ctx.strokeStyle='rgba(180,160,140,.18)';ctx.lineWidth=1;
+  for(let v=0;v<=10;v+=2){const y=pad.t+ch-(v/10)*ch;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke();ctx.fillStyle='rgba(110,90,70,.45)';ctx.font='9px Nunito,sans-serif';ctx.textAlign='right';ctx.fillText(v,pad.l-3,y+3);}
+  ctx.fillStyle='rgba(110,90,70,.4)';ctx.font='9px Nunito,sans-serif';ctx.textAlign='center';
+  days.forEach((d,i)=>{if(i%2===0){const x=pad.l+(i/(days.length-1))*cw;ctx.fillText(d,x,H-6);}});
+  const pts=values.map((v,i)=>({x:pad.l+(i/(days.length-1))*cw,y:v!==null?pad.t+ch-(v/10)*ch:null}));
+  const valid=pts.filter(p=>p.y!==null);
+  if(valid.length){
+    const grad=ctx.createLinearGradient(0,pad.t,0,pad.t+ch);
+    grad.addColorStop(0,'rgba(232,165,152,.28)');grad.addColorStop(1,'rgba(232,165,152,.0)');
+    ctx.beginPath();let s=false;
+    pts.forEach(p=>{if(p.y===null)return;if(!s){ctx.moveTo(p.x,p.y);s=true;}else ctx.lineTo(p.x,p.y);});
+    ctx.lineTo(valid.at(-1).x,pad.t+ch);ctx.lineTo(valid[0].x,pad.t+ch);ctx.closePath();
+    ctx.fillStyle=grad;ctx.fill();
+    ctx.beginPath();s=false;
+    pts.forEach(p=>{if(p.y===null)return;if(!s){ctx.moveTo(p.x,p.y);s=true;}else ctx.lineTo(p.x,p.y);});
+    ctx.strokeStyle='rgba(201,123,110,.85)';ctx.lineWidth=2.5;ctx.lineJoin='round';ctx.stroke();
+    valid.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,5,0,Math.PI*2);ctx.fillStyle='white';ctx.fill();ctx.strokeStyle='rgba(201,123,110,.9)';ctx.lineWidth=2.5;ctx.stroke();});
+  } else {
+    ctx.fillStyle='rgba(150,120,100,.4)';ctx.font='14px Nunito,sans-serif';ctx.textAlign='center';ctx.fillText('Log some days to see your trend 🌱',W/2,H/2);
+  }
+}
+
+function renderStats(){
+  const logs=getLogs();
+  const el=document.getElementById('statsGrid');
+  if(!logs.length){el.innerHTML='<p class="no-logs" style="grid-column:span 2">No data yet 🌱</p>';return;}
+  const pains=logs.map(l=>l.pain);
+  const avg=(pains.reduce((a,b)=>a+b,0)/pains.length).toFixed(1);
+  el.innerHTML=
+    stat('📅','Total entries',logs.length)+
+    stat('🔥','Current streak',getStreak(logs)+' days')+
+    stat('📊','Avg pain',avg+'/10')+
+    stat('💚','Best day',Math.min(...pains)+'/10');
+}
+function stat(icon,lbl,val){return`<div class="stat-box"><div style="font-size:1.4rem">${icon}</div><div class="stat-val">${val}</div><div class="stat-lbl">${lbl}</div></div>`;}
+
+let selStars=0,selMood='';
+function rateStar(n){
+  selStars=n;
+  const lbls=['','Thanks for telling us!','We\'ll keep improving 💛','You\'re too kind 😊','Really glad it\'s helping!','This means the world! 🌟'];
+  document.querySelectorAll('.star-btn').forEach((b,i)=>b.classList.toggle('lit',i<n));
+  document.getElementById('starMsg').textContent=lbls[n]||'';
+}
+function selectMood(btn){
+  document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');selMood=btn.textContent;
+}
+function saveFeedback(){
+  const text=document.getElementById('feedbackText').value.trim();
+  if(!text&&!selStars&&!selMood){showToast('Please add a rating or message first 💛');return;}
+  const now=new Date();
+  const entry={stars:selStars,mood:selMood,text,date:now.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}),ts:now.toISOString()};
+  const fb=getFeedbacks();fb.unshift(entry);
+  localStorage.setItem('backFeedbacks',JSON.stringify(fb));
+  document.getElementById('feedbackText').value='';
+  selStars=0;selMood='';
+  document.querySelectorAll('.star-btn').forEach(b=>b.classList.remove('lit'));
+  document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('selected'));
+  document.getElementById('starMsg').textContent='';
+  showToast('Feedback saved! Thank you 💛');
+  renderAll();checkNewBadges(getLogs());
+}
+function renderFeedbackList(){
+  const fb=getFeedbacks();
+  const el=document.getElementById('feedbackList');
+  if(!fb.length){el.innerHTML='<p class="no-logs">No feedback yet 🌱</p>';return;}
+  el.innerHTML=fb.map(f=>`<div class="log-entry" style="border-left-color:var(--amber)"><div class="log-top"><span class="log-date">${f.date}</span><span style="font-size:.85rem">${'⭐'.repeat(f.stars||0)}</span></div>${f.mood?`<div class="log-note">${f.mood}</div>`:''}${f.text?`<div class="log-note">${f.text}</div>`:''}</div>`).join('');
+}
+
+function updateThreshold(key,val){
+  const t=getThresholds();t[key]=parseInt(val);
+  localStorage.setItem('backThresholds',JSON.stringify(t));
+  document.getElementById(`val-${key}`).textContent=val;
+  renderExerciseGates();
+}
+function loadThresholds(){
+  const t=getThresholds();
+  ['deadbug','birddog','pallof'].forEach(k=>{
+    document.getElementById(`slider-${k}`).value=t[k];
+    document.getElementById(`val-${k}`).textContent=t[k];
+  });
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+function fireConfetti(){
+  const colors=['#e8a598','#8fab8a','#e8c47a','#c97b6e','#5e8a5c','#e8c47a'];
+  for(let i=0;i<24;i++){
+    const el=document.createElement('div');el.className='confetti-piece';
+    el.style.cssText=`left:${Math.random()*100}vw;top:${-5+Math.random()*15}px;background:${colors[Math.floor(Math.random()*colors.length)]};width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;border-radius:${Math.random()>.5?'50%':'3px'};animation-delay:${Math.random()*.5}s;animation-duration:${1.2+Math.random()*.6}s;`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),2200);
+  }
+}
+
+function showTab(id,evt){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  evt.currentTarget.classList.add('active');
+  if(id==='progress'||id==='exercises')setTimeout(renderAll,50);
+}
+
+function toggleEx(card){
+  const lock=card.querySelector('.locked-overlay');
+  if(lock&&lock.style.display==='block')return;
+  card.classList.toggle('open');
+}
+
+function clearData(){
+  if(confirm('Clear all logs and data? This cannot be undone.')){
+    ['backLogs','backFeedbacks','earnedBadges'].forEach(k=>localStorage.removeItem(k));
+    renderAll();showToast('Data cleared 🌱');
+  }
+}
+
+loadThresholds();
+renderAll();
+window.addEventListener('resize',()=>{if(document.getElementById('progress').classList.contains('active'))renderChart();});
+</script>
+
+</body>
+</html>
